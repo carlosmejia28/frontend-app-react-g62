@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table } from "react-bootstrap";
+import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { deletePacienteById, listaPacientes } from "../Server/Server";
 
@@ -12,59 +12,66 @@ function TablaPaciente() {
             const res = await listaPacientes();
             setListaPaciente(res);
         } catch (error) {
-            
+
         }
     }
     useEffect(() => {
         listarPacientes();
-    },[setListaPaciente]);
+    }, [setListaPaciente]);
 
 
-    async function eliminarPaciente(id){
+    async function eliminarPaciente(id) {
         let result = window.confirm("Seguro de Eliminar");
-        if (result){
+        if (result) {
             const res = await deletePacienteById(id);
             alert(res);
-            setListaPaciente(listPaciente.filter(paciente=>paciente.id!==id))
+            setListaPaciente(listPaciente.filter(paciente => paciente.id !== id))
         }
 
     }
 
 
-    let contadorPacientes=0;
+    let contadorPacientes = 0;
 
 
     return (
-        <Table  striped bordered hover >
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>F. Nacimiento</th>
-                <th>Ciudad</th>
-                <th>Ver Detalle</th>
-                <th>Eliminar</th>
-            </tr>          
-             </thead>
-        <tbody >
-            {   
-                listPaciente.map((paciente)=>(
-                    <tr key={paciente.id}>
-                        <td>{++contadorPacientes}</td>
-                        <td>{paciente.nombre}</td>
-                        <td>{paciente.apellido}</td>
-                        <td>{paciente.fnacimiento}</td>
-                        <td>{paciente.ubicacion.ciudad}</td>
-                        <td><Link to={`/paciente/${paciente.id}`}>Ver Detalle</Link></td>
-                        <td ><Button variant="danger" onClick={()=>eliminarPaciente(paciente.id)}>Eliminar</Button></td>
+        <Container>
+            <Row className="my-3">
+                <Col><h2>Pacientes</h2></Col>
+                <Col xs={6}></Col>
+                <Col><Link to="/paciente/form"><Button variant="success">Registrar</Button></Link></Col>
+            </Row>
+            <Table striped bordered hover >
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>F. Nacimiento</th>
+                        <th>Ciudad</th>
+                        <th>Ver Detalle</th>
+                        <th>Eliminar</th>
                     </tr>
-                )
+                </thead>
+                <tbody >
+                    {
+                        listPaciente.map((paciente) => (
+                            <tr key={paciente.id}>
+                                <td>{++contadorPacientes}</td>
+                                <td>{paciente.nombre}</td>
+                                <td>{paciente.apellido}</td>
+                                <td>{paciente.fnacimiento}</td>
+                                <td>{paciente.ubicacion.ciudad}</td>
+                                <td><Link to={`/paciente/${paciente.id}`}>Ver Detalle</Link></td>
+                                <td ><Button variant="danger" onClick={() => eliminarPaciente(paciente.id)}>Eliminar</Button></td>
+                            </tr>
+                        )
 
-                )
-            }
-        </tbody>
-        </Table>
+                        )
+                    }
+                </tbody>
+            </Table>
+        </Container>
     )
 }
 export { TablaPaciente }

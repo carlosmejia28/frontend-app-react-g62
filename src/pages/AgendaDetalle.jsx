@@ -11,13 +11,13 @@ function AgendaDetalle() {
     const navigate = useNavigate();
 
     function returnToPacientes() {
-        navigate("/paciente")
+        navigate("/agenda")
     }
 
     const [agenda, setAgenda] = useState({});
     const [citas, setCitas] = useState([]);
     const [especialidades, setEspecialidades] = useState([]);
-    const [fecha, setFecha]=useState("");
+    const [fecha, setFecha] = useState("");
 
     useEffect(() => {
         findAgendaById(id).then(data => {
@@ -34,47 +34,50 @@ function AgendaDetalle() {
     citas.map((cita) => (
         horariosOcupado.push(cita.hora)
     ))
-      
+
     return (
-        <Container>
-            <Row>
-                 <Col className="my-3"><h3>Fecha para la Cita: {fecha.slice(0,10)}</h3></Col>
+        <Container className="my-3">
+             <Row>
+                <Col >
+                <p>Fecha Agenda</p>
+                <h3>{fecha.slice(0, 10)}</h3>
+                </Col>
+                <Col>
+                <p>Nombre del Medico</p>
+                <h2>{agenda.nombreMedico}</h2>
+                </Col>            
+            <Col>
+            <p>Especialidades del Medico</p>
+                <ul>
+                    {
+                        especialidades.map((especialidad) => (
+                            <li key={especialidad}>{especialidad}</li>
+                        ))
+                    }
+                </ul>
+            </Col>
             </Row>
-
-            
-            <h2>{agenda.nombreMedico}</h2>
-            <ul>
-                {
-                    ( console.log(agenda.fecha) )
-                }
-            </ul>
-
-
-            <ul>
-                {
-                    especialidades.map((especialidad) => (
-                        <li key={especialidad}>{especialidad}</li>
-                    ))
-                }
-            </ul>
-
-            <Form className="my-3">
-                {
-                    horarios.map((hora) => (
-                        <Form.Check className="my-3"
-                            key={hora}
-                            type="radio"
-                            label={hora}
-                            name="hora"
-                            disabled={horariosOcupado.includes(hora) ? true : false}
-
-                        />
-                    ))
-
-                }
-                <Button type="submit" value="Submit">Regresar</Button>
-            </Form>
-
+            <Row className="justify-content-md-center" >
+                <Col xs lg="2">
+                    Horarios disponibles:
+                </Col>
+                <Col md="auto">
+                    <Form className="my-3">
+                        {
+                            horarios.map((hora) => (
+                                <Form.Check className="my-3"
+                                    key={hora}
+                                    type="radio"
+                                    label={hora}
+                                    name="hora"
+                                    disabled={horariosOcupado.includes(hora) ? true : false}
+                                />
+                            ))
+                        }
+                    </Form>
+                </Col>
+            </Row>
+            <Button type="submit" onClick={() => returnToPacientes()}>Regresar</Button>
         </Container>
     )
 }

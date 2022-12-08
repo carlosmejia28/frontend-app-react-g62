@@ -57,12 +57,11 @@ function AgendaDetalle() {
                 </ul>
             </Col>
             </Row>
-            <Row className="justify-content-md-center" >
+            <Row xs={2} md={4} lg={6} >
                 <Col xs lg="2">
                     Horarios disponibles:
                 </Col>
                 <Col md="auto">
-                    <Form className="my-3">
                         {
                             horarios.map((hora) => (
                                 <Form.Check className="my-3"
@@ -74,7 +73,6 @@ function AgendaDetalle() {
                                 />
                             ))
                         }
-                    </Form>
                 </Col>
             </Row>
             <Button type="submit" onClick={() => returnToPacientes()}>Regresar</Button>

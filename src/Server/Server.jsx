@@ -31,7 +31,6 @@ export async function savePaciente(paciente) {
 export async function listaAgendas() {
     const res = await fetch(API_URL+"agendas/");
     const data = await res.json();
-    console.log(data)
     return data;
 
 };

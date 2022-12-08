@@ -1,81 +1,135 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import { findPacienteById } from "../Server/Server";
+import { deletePacienteById, findPacienteById, savePaciente } from "../Server/Server";
 
 function PacienteDetalle() {
+
+    const [disabled, setDisable] = useState(true);
+    const [paciente, setPaciente] = useState({})
+
     const { id } = useParams();
 
     const navigate = useNavigate();
-    function returnToPacientes(){
+    function retornarPage() {
         navigate("/paciente")
     }
 
-    const [paciente, setPaciente] = useState({});
-
-    // const[alergias,setAlergias]=useState([])
-
     useEffect(() => {
-        findPacienteById(id).then(data => {
-            setPaciente(data);
-            // setAlergias(data.alergias)
-        });
+        findPacienteById(id)
+            .then(data => {
+                setPaciente(data);
+            })
     }, [id])
 
-    return (
-        <>
-        <h1>Detalle de Paciente</h1>
-        <Form>
-            <Row>
-                <Col xs="auto" className="my-1">
-                    <Form.Label>Nombre</Form.Label>
-                    <Form.Control placeholder={paciente.nombre} />
-                </Col>
-                <Col xs="auto" className="my-1">
-                    <Form.Label>Apellido</Form.Label>
-                    <Form.Control placeholder={paciente.apellido} />
-                </Col>
-                <Col xs="auto" className="my-1">
-                    <Form.Label>Fecha de Nacimiento</Form.Label>
-                    <Form.Control placeholder={paciente.fnacimiento} />
-                </Col>
+    async function eliminarPaciente(id) {
+        let respuesta = window.confirm("Seguro de Eliminar?");
+        if (respuesta) {
+            const response = await deletePacienteById(id);
+            alert(response);
+            retornarPage();
+        }
+    };
 
+    function handleChange({ target }) {
+        setPaciente({
+            ...paciente,
+            [target.name]: target.value
+        });
+    };
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+
+        if (!Array.isArray(paciente.alergias)) {
+            paciente.alergias = paciente.alergias.split(" ").join("").split(","); //convertir una cadena en una lista, usando la coma (,) como delimitador y quitando los espacios vacios entre items
+        }
+
+        const response = await savePaciente(paciente);
+        alert(response);
+        retornarPage()
+    }
+
+    return (
+        <Container>
+            <Row>
+                <Form.Label>Id</Form.Label>
+                <Col><Form.Control defaultValue={paciente.id} disabled /></Col>
+                <Col md="auto"></Col>
+                <Col xs lg="2">
+                    <Button variant="danger" onClick={() => eliminarPaciente(paciente.id)} >Eliminar</Button>
+                </Col>
+            </Row>
+
+            <Form className="mt-5" onSubmit={handleSubmit}>
+
+                <Row className="mb-3">
+                    <Form.Group as={Col} controlId="nombre">
+                        <Form.Label>Nombre</Form.Label>
+                        <Form.Control defaultValue={paciente.nombre} disabled={disabled}
+                            name="nombre"
+                            type="text"
+                            required
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+
+                    <Form.Group as={Col} controlId="apellido">
+                        <Form.Label>Apellido</Form.Label>
+                        <Form.Control defaultValue={paciente.apellido} disabled={disabled}
+                            name="apellido"
+                            type="text"
+                            required
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+                    <Form.Group as={Col} controlId="fnacimiento">
+                        <Form.Label>F. Nacimiento</Form.Label>
+                        <Form.Control defaultValue={paciente.fnacimiento} disabled={disabled}
+                            name="fnacimiento"
+                            type="text"
+                            required
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+                </Row>
+                <Row className="mb-3">
+                    <Form.Group as={Col} controlId="departamento">
+                        <Form.Label>Departamento</Form.Label>
+                        <Form.Control disabled placeholder={paciente.ubicacion !== undefined ? paciente.ubicacion.departamento : "undefined"} />
+                    </Form.Group>
+
+                    <Form.Group as={Col} controlId="ciudad">
+                        <Form.Label>Ciudad</Form.Label>
+                        <Form.Control disabled placeholder={paciente.ubicacion !== undefined ? paciente.ubicacion.ciudad : "undefined"} />
+                    </Form.Group>
+
+                    <Form.Group as={Col} controlId="direccion">
+                        <Form.Label>Direccion</Form.Label>
+                        <Form.Control disabled placeholder={paciente.ubicacion !== undefined ? paciente.ubicacion.direccion : "undefined"} />
+                    </Form.Group>
+
+                    <Form.Group as={Col} className="mb-3" id="alergias">
+                        <Form.Label>Alergias</Form.Label>
+                        <textarea className="form-control" disabled={disabled} defaultValue={paciente.alergias}
+                            name="alergias"
+                            type="text"
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
                 </Row>
                 <Row>
-                    <Col xs="auto" className="my-1">
-                        <Form.Label>Departamento</Form.Label>
-                        <Form.Control placeholder={paciente.ubicacion !== undefined ? paciente.ubicacion.departamento : "null"} />
-                    </Col>
-                    <Col xs="auto" className="my-1">
-                    <Form.Label>Ciudad</Form.Label>
-                        <Form.Control placeholder={paciente.ubicacion !== undefined ? paciente.ubicacion.ciudad : "null"} />
-                    </Col>
-                    <Col xs="auto" className="my-1">
-                    <Form.Label>Dirección</Form.Label>
-                        <Form.Control placeholder={paciente.ubicacion !== undefined ? paciente.ubicacion.direccion : "null"} />
-                    </Col>
+                    <Col md={{ span: 3, offset: 3 }}><Button variant="success" type="submit">Guardar</Button></Col>
+                    <Col md={{ span: 3, offset: 3 }}><Button variant="warning" onClick={() => setDisable(!disabled)}>Editar</Button></Col>
                 </Row>
-                <Row >
-                <Col  className="my-1" xs lg="3">
-                    <Form.Label>Alergias</Form.Label>
 
-                       {/*  <Form.Select>
-                            {
-                                alergias.map((alergia)=>(
-                                    <option key={alergia} >{alergia}</option>
-                                ))
-                            }
-                        </Form.Select> */}
-                        <textarea className="form-control" placeholder={paciente.alergias} />
-                    </Col>
 
-                </Row>
-            
-        </Form>
-        <br/>
-        <Button onClick={returnToPacientes}>Volver</Button>
-        </>
-       
+            </Form>
+            <Button variant="primary" type="button" onClick={retornarPage}>
+                Volver
+            </Button>
+        </Container>
+
     )
 
 }

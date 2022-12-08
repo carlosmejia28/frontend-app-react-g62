@@ -11,6 +11,7 @@ function Menu() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
           <NavLink to="/" className="nav-link">Inicio</NavLink>
+          <NavLink to="/agenda" className="nav-link">Agendas</NavLink>
             <Nav.Link href="https://es.reactjs.org/" target="_blank">React</Nav.Link>
             <NavDropdown title="Más Opciones" id="basic-nav-dropdown">
               <NavLink to="/paciente" className="nav-link">Paciente</NavLink>

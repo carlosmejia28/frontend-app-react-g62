@@ -39,4 +39,13 @@ export async function findAgendaById(id){
     const res = await fetch(API_URL+"agendas/"+id);
     const data = await res.json();
     return data;
+};
+export async function saveAgenda(agenda){
+    const options = {
+        method: "POST",
+        headers:{"Content-type":"application/json"},
+        body:JSON.stringify(agenda)
+    }
+    const res = await fetch(API_URL+"agendas",options);
+    return await res.json();
 }

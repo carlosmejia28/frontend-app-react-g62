@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Container } from "react-bootstrap";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { listaAgendas } from "../Server/Server";
 
@@ -24,18 +24,19 @@ function CardsAgendas() {
 
     return (
        
-        <Container>
+        <Container className="my-3">
+          <Row>
             {
                 agendas.filter(agenda=>agenda.fecha>fecha.toISOString()).map((agenda) => (
+                    <Col  key={agenda.id}>
                     <Card
-                      key={agenda.id}
                       text={agenda.fecha}
                       style={{ width: '18rem' }}
                       className="mb-2"
                     >
-                      <Card.Header>Agenda Id: {agenda.id}</Card.Header>
+                      <Card.Header>Fecha agenda: {agenda.fecha.slice(0,10)}</Card.Header>
                       <Card.Body>
-                        <Card.Title>{agenda.fecha.slice(0,10)} </Card.Title>
+                        <Card.Title>{} </Card.Title>
                         <Card.Text>
                           Some quick example text to build on the card title and make up the
                           bulk of the card's content.
@@ -43,7 +44,9 @@ function CardsAgendas() {
                     <Link to={`/agenda/${agenda.id}`}><Button variant="primary">Ver Detalle</Button></Link>
                       </Card.Body>
                     </Card>
+                    </Col>
                   ))}
+                  </Row>
             
         </Container>
     )
